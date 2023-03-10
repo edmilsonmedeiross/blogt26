@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import searchUser from "../../services/user";
+import searchUser from "../../services/searchUser";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { email, password } = req.body;
@@ -10,10 +10,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const data = { email, password }
   
-  const verify = await searchUser(data);
+  const verify: any = await searchUser(data);
+  // console.log('verify', verify);
+  
 
 
-  if(verify.length) { 
+  if(verify) {
     res.status(200).json({ data: verify });
     return;
   }

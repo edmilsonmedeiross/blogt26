@@ -3,6 +3,8 @@ import Link from "next/link"
 
 function Header() {
   const userSession = useSession();
+  console.log(userSession);
+  
 
   let admin: boolean = false;
 

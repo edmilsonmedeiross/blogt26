@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 
-const postSchema = new mongoose.Schema({})
+// const postSchema = new mongoose.Schema({})
 
-export default async function getAllPost() {
+// export default async function getAllPost() {
 
-}
+// }

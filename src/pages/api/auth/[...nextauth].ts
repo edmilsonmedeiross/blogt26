@@ -1,28 +1,32 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import client from "@/services/prismadb";
 
 const { BASE_URL } = process.env;
 
-export const authOptions = {
+
+export const authOptions: AuthOptions = {
+  // adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
       name: 'credentials',
   
       credentials: {
         email: {},
-        password: {},
+        password: {}
       },
       async authorize(credentials, req) {
-        const res = await fetch(`${BASE_URL}/api/login`, {
+        const res: any = await fetch(`${BASE_URL}/api/login`, {
           method: 'POST',
           body: JSON.stringify({ email: credentials?.email, password: credentials?.password }),
           headers: { "Content-Type": "application/json;charset=UTF-8" },
         });
 
-        const token = await res.json();
+        const {data} = await res.json();
 
-        if (res.ok && token) {
-          return token;
+        if (res.ok && data) {
+          return data;
         }
 
         return null
@@ -30,22 +34,29 @@ export const authOptions = {
     })
   ],
   callbacks: {
-    async jwt({ token, user }: any) {
-      if (user) {
-        delete user.data[0].password;
-        token.user = user.data[0];
+    async jwt(all: any) {
+      const {token, user} = all
+      console.log('token', token);
+      console.log('user', user);
+      
+      if (user?.password) {
+        delete user?.password;
+        token.user = user;
       }
 
       return token
     },
     async session(all: any) {
       const { session, token } = all;
+      console.log('session===>', all);
+      
       
       return {
         ...all,
         session: {
           ...session,
-          user: token.user
+          user: token.user,
+          // role: token.user.role,
         }
       };
     }

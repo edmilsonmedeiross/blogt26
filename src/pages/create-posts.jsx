@@ -38,7 +38,7 @@ export default CreatePosts;
 
 export const getServerSideProps = async ({req, res}) => {
   const { session } = await getServerSession(req, res, authOptions);
-  console.log(session);
+  console.log('Session post =========>', session);
 
   if (!session.user?.admin) {
     return {
