@@ -3,7 +3,7 @@ import NextAuth, { AuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import client from "@/services/prismadb";
 
-const { BASE_URL } = process.env;
+const { NEXTAUTH_URL } = process.env;
 
 
 export const authOptions: AuthOptions = {
@@ -16,8 +16,8 @@ export const authOptions: AuthOptions = {
         email: {},
         password: {}
       },
-      async authorize(credentials, req) {
-        const res: any = await fetch(`${BASE_URL}/api/login`, {
+      async authorize(credentials, req) {   
+        const res: any = await fetch(`${NEXTAUTH_URL}/api/login`, {
           method: 'POST',
           body: JSON.stringify({ email: credentials?.email, password: credentials?.password }),
           headers: { "Content-Type": "application/json;charset=UTF-8" },
@@ -39,7 +39,7 @@ export const authOptions: AuthOptions = {
       console.log('token', token);
       console.log('user', user);
       
-      if (user?.password) {
+      if (user?.password === '') {
         delete user?.password;
         token.user = user;
       }
@@ -52,12 +52,8 @@ export const authOptions: AuthOptions = {
       
       
       return {
-        ...all,
-        session: {
           ...session,
           user: token.user,
-          // role: token.user.role,
-        }
       };
     }
   }
