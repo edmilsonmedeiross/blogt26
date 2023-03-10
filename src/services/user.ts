@@ -9,8 +9,7 @@ export default async function searchUser(paran: any = {}) {
   await mongoose.connect(uri);
 
   const user = await userModel.find(paran);
-
-  await mongoose.disconnect();
+// console.log(user);
 
   return user;
   }

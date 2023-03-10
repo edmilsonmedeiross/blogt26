@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import searchUser from "./user";
+import searchUser from "../../services/user";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { email, password } = req.body;

@@ -19,6 +19,6 @@
     },
     "types": ["next", "next/types/global", "node"]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/create-posts.jsx", "src/components/MyEditor.jsx"],
   "exclude": ["node_modules"]
 }
