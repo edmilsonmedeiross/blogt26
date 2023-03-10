@@ -36,8 +36,6 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async jwt(all: any) {
       const {token, user} = all
-      console.log('token', token);
-      console.log('user', user);
       
       if (user?.password === '') {
         delete user?.password;
@@ -48,8 +46,6 @@ export const authOptions: AuthOptions = {
     },
     async session(all: any) {
       const { session, token } = all;
-      console.log('session===>', all);
-      
       
       return {
           ...session,
