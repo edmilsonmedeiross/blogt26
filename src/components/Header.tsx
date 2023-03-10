@@ -1,23 +1,30 @@
+import { UserObj, Roles } from "@/types/User";
 import { useSession } from "next-auth/react";
 import Link from "next/link"
 
+interface Data {
+  data: UserObj | null;
+  status: "loading" | "authenticated" | "unauthenticated";
+}
+
 function Header() {
-  const userSession = useSession();
+  const userSession = useSession() as Data;
   console.log(userSession);
-  
 
-  let admin: boolean = false;
-
+  let role: Roles = "user";
   if (userSession.data) {
-    const { data: { session } }: any = userSession;
-    admin = session?.user?.admin; 
+    const { data: { user } } = userSession;
+    role = user?.role; 
   }
 
   return (
     <>
     <nav>
       <Link href="/login">Login</Link>
-      {admin && <Link href="/create-posts">Administração</Link>}
+      {
+        role === "admin"
+          && <Link href="/create-posts">Administração</Link>
+      }
     </nav>
     </>
   )
