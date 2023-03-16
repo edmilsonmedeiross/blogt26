@@ -1,0 +1,6 @@
+[commit]
+    template = ./.gitmessage
+
+[co-author]
+    name = Ikaro Vieira
+    email = ikarovieiraa@gmail.com
