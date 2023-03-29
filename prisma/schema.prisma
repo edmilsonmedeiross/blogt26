@@ -33,6 +33,6 @@ model users {
   email        String    @unique(map: "email") @db.VarChar(255)
   registeredAt DateTime? @default(now()) @db.DateTime(0)
   password     String    @db.MediumText
-  role         String?   @default("user") @db.VarChar(45)
+  role         String   @default("user") @db.VarChar(45)
   bio          String?   @db.Text
 }
