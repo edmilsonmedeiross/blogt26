@@ -1,60 +1,53 @@
-import CredentialsProvider from "next-auth/providers/credentials";
-import NextAuth, { AuthOptions } from "next-auth";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import client from "@/services/prismadb";
+import CredentialsProvider from 'next-auth/providers/credentials';
+import NextAuth, { AuthOptions } from 'next-auth';
+import axios from 'axios';
+import User from '@/types/User';
 
 const { NEXTAUTH_URL } = process.env;
 
-
 export const authOptions: AuthOptions = {
-  // adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
       name: 'credentials',
-  
       credentials: {
         email: {},
-        password: {}
+        password: {},
       },
-      async authorize(credentials, req) {   
-        const res: any = await fetch(`${NEXTAUTH_URL}/api/login`, {
-          method: 'POST',
-          body: JSON.stringify({ email: credentials?.email, password: credentials?.password }),
-          headers: { "Content-Type": "application/json;charset=UTF-8" },
+      async authorize(credentials) {
+        const { data } = await axios.post<User>(`${NEXTAUTH_URL as string}/api/login`, {
+            email: credentials?.email,
+            password: credentials?.password,
         });
-
-        const {data} = await res.json();
-
-        if (res.ok && data) {
-          return data;
+        console.log('AUTH ====>', data);
+        
+        if (data) {
+          return { ...data, id: data.userId };
         }
 
-        return null
-      }
-    })
+        return null;
+      },
+    }),
   ],
   callbacks: {
-    async jwt(all: any) {
-      const {token, user} = all
-      
+    jwt(all) {
+      const { token, user } = all;
+
       if (user?.password === '') {
-        delete user?.password;
-        token.user = user;
+        delete user.password;
+        return {  ...token, user };
       }
 
-      return token
+      return token;
     },
-    async session(all: any) {
+    session(all) {
       const { session, token } = all;
-      
+
       return {
-          ...session,
-          user: token.user,
+        ...session,
+        user: token.user,
       };
-    }
-  }
-}
+    },
+  },
+};
 
-export default NextAuth(authOptions)
-
-
+export default NextAuth(authOptions);
