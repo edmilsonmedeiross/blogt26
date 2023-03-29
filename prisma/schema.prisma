@@ -13,17 +13,18 @@ model categories {
 }
 
 model posts {
-  postId     String    @id @db.VarChar(40)
-  title      String    @unique @db.VarChar(75)
-  thumb      String    @db.MediumText
-  createdAt  DateTime? @default(now()) @db.DateTime(0)
-  modifiedAt DateTime? @db.DateTime(0)
-  content    String    @db.MediumText
-  published  Boolean?  @default(false)
-  authorId   String    @db.VarChar(40)
-  categories Json
-  comments   Json?     @default(dbgenerated("(_utf8mb4\\'[]\\')"))
-  slug       String    @unique @db.VarChar(75)
+  postId        String    @id @db.VarChar(40)
+  title         String    @unique @db.VarChar(75)
+  thumbUrl      String    @db.MediumText
+  thumbPublicId String    @unique @db.VarChar(255)
+  createdAt     DateTime? @default(now()) @db.DateTime(0)
+  modifiedAt    DateTime? @db.DateTime(0)
+  content       String    @db.MediumText
+  published     Boolean?  @default(false)
+  authorId      String    @db.VarChar(40)
+  categories    Json
+  comments      Json?
+  slug          String    @unique @db.VarChar(75)
 }
 
 model users {
@@ -32,6 +33,6 @@ model users {
   email        String    @unique(map: "email") @db.VarChar(255)
   registeredAt DateTime? @default(now()) @db.DateTime(0)
   password     String    @db.MediumText
-  role         String?   @default(dbgenerated("(_utf8mb4\\'user\\')")) @db.Text
+  role         String?   @default("user") @db.VarChar(45)
   bio          String?   @db.Text
 }
