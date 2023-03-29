@@ -1,22 +1,34 @@
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { Session } from "next-auth";
-import { useSession, SessionContextValue } from "next-auth/react";
-import Link from "next/link"
-import { ReactNode } from "react";
+import { UserObj, Roles } from '@/types/User';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+
+interface Data {
+  data: UserObj | null;
+  status: 'loading' | 'authenticated' | 'unauthenticated';
+}
 
 function Header() {
-  const { data: { session } }: any  = useSession();
-  const admin: any = session?.user?.admin;
+  const userSession = useSession() as Data;
+  console.log(userSession);
+
+  let role: Roles = 'user';
+  if (userSession.data) {
+    const { data: { user } } = userSession;
+    role = user?.role; 
+  }
 
   return (
     <>
-    <nav>
+    <nav className="ck-head">
       <Link href="/login">Login</Link>
-      {admin && <Link href="/create-posts">Administração</Link>}
+      {
+        role === 'admin'
+          && <Link href="/create-posts">Administração</Link>
+      }
     </nav>
     </>
-  )
+  );
 }
 
-export default Header
+export default Header;
 

@@ -1,9 +1,7 @@
 import Header from '@/components/Header';
 import React from 'react';
-// import { connectToDatabase } from '../services/index';
 
 export default function Home() {
-
   return (
     <>
     <Header />
@@ -11,5 +9,5 @@ export default function Home() {
         <h1>Nosso blog</h1>
       </main>
     </>
-  )
+  );
 }

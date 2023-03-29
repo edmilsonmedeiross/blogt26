@@ -1,57 +1,53 @@
-import CredentialsProvider from "next-auth/providers/credentials";
-import NextAuth from "next-auth";
+import CredentialsProvider from 'next-auth/providers/credentials';
+import NextAuth, { AuthOptions } from 'next-auth';
+import axios from 'axios';
+import User from '@/types/User';
 
-const { BASE_URL } = process.env;
+const { NEXTAUTH_URL } = process.env;
 
-export const authOptions = {
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'credentials',
-  
       credentials: {
         email: {},
         password: {},
       },
-      async authorize(credentials, req) {
-        const res = await fetch(`${BASE_URL}/api/login`, {
-          method: 'POST',
-          body: JSON.stringify({ email: credentials?.email, password: credentials?.password }),
-          headers: { "Content-Type": "application/json;charset=UTF-8" },
+      async authorize(credentials) {
+        const { data } = await axios.post<User>(`${NEXTAUTH_URL as string}/api/login`, {
+            email: credentials?.email,
+            password: credentials?.password,
         });
-
-        const token = await res.json();
-
-        if (res.ok && token) {
-          return token;
+        console.log('AUTH ====>', data);
+        
+        if (data) {
+          return { ...data, id: data.userId };
         }
 
-        return null
-      }
-    })
+        return null;
+      },
+    }),
   ],
   callbacks: {
-    async jwt({ token, user }: any) {
-      if (user) {
-        delete user.data[0].password;
-        token.user = user.data[0];
+    jwt(all) {
+      const { token, user } = all;
+
+      if (user?.password === '') {
+        delete user.password;
+        return {  ...token, user };
       }
 
-      return token
+      return token;
     },
-    async session(all: any) {
+    session(all) {
       const { session, token } = all;
-      
+
       return {
-        ...all,
-        session: {
-          ...session,
-          user: token.user
-        }
+        ...session,
+        user: token.user,
       };
-    }
-  }
-}
+    },
+  },
+};
 
-export default NextAuth(authOptions)
-
-
+export default NextAuth(authOptions);

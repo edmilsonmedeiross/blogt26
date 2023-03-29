@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model categories {
+  categoryId   Int    @id @default(autoincrement())
+  categoryName String @unique(map: "categoryName") @db.VarChar(255)
+}
+
+model posts {
+  postId        String    @id @db.VarChar(40)
+  title         String    @unique @db.VarChar(75)
+  thumbUrl      String    @db.MediumText
+  thumbPublicId String    @unique @db.VarChar(255)
+  createdAt     DateTime? @default(now()) @db.DateTime(0)
+  modifiedAt    DateTime? @db.DateTime(0)
+  content       String    @db.MediumText
+  published     Boolean?  @default(false)
+  authorId      String    @db.VarChar(40)
+  categories    Json
+  comments      Json?
+  slug          String    @unique @db.VarChar(75)
+}
+
+model users {
+  userId       String    @id @db.VarChar(40)
+  name         String    @db.VarChar(45)
+  email        String    @unique(map: "email") @db.VarChar(255)
+  registeredAt DateTime? @default(now()) @db.DateTime(0)
+  password     String    @db.MediumText
+  role         String   @default("user") @db.VarChar(45)
+  bio          String?   @db.Text
+}

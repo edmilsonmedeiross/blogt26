@@ -1,33 +1,34 @@
-import React, { useState, ChangeEvent } from 'react'
+import React, { FormEvent, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
-const { BASE_URL } = process.env;
-
-export default function login() {
+export default function Login() {
   const [credential, setCredential] = useState({ email: '', password: '' });
   const Router = useRouter();
 
-  const handleChange = ({ target }: {target: any}) => {
+  const handleChange = ({ target }: { target: HTMLInputElement }) => {
     const {name, value} = target;
-    setCredential({ ...credential, [name]: value })
-  }
+    setCredential({ ...credential, [name]: value });
+  };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const res = await signIn('credentials', {
       redirect: false,
       email: credential.email,
       password: credential.password,
-    })
-    // console.log(res);
-    
+    });
+
     if (res?.status === 200) {
-      Router.push('/');
+      await Router.push('/');
     }
-  }
+  };
 
   return (
-    <form>
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    <form onSubmit={ (e: FormEvent<HTMLFormElement>) => {
+      handleSubmit(e).catch((err) => console.error(err));
+    } }>
       <input
         type="text"
         value={credential.email}
@@ -41,11 +42,10 @@ export default function login() {
         name="password"
       />
       <button
-        type='button'
-        onClick={ handleSubmit }
+        type='submit'
       >
         Login
       </button>
     </form>
-  )
+  );
 }
