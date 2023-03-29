@@ -21,7 +21,7 @@ export default async function handler(
   const verify = await searchUser(data);
 
   if (verify) {
-    return res.status(200).json({ data: verify });
+    return res.status(200).json(verify);
   }
 
   res.status(400).json({ error: 'Invalid email and/or password' });
