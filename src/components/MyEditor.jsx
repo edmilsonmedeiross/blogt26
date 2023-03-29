@@ -1,7 +1,6 @@
-// import dynamic from 'next/dynamic';
-import ClassicEditor from './ckeditor'
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import { useState } from 'react';
+import ClassicEditor from './ckeditor';
 
 const editorConfiguration = {
   toolbar: {
@@ -36,9 +35,9 @@ const editorConfiguration = {
       'codeBlock',
       'insertTable',
       'mediaEmbed',
-      'removeFormat'
+      'removeFormat',
     ],
-    shouldNotGroupWhenFull: true
+    shouldNotGroupWhenFull: true,
   },
   image: {
     toolbar: [
@@ -46,43 +45,54 @@ const editorConfiguration = {
       'toggleImageCaption',
       'imageStyle:inline',
       'imageStyle:block',
-      'imageStyle:side',
-      'linkImage'
-    ]
+      'imageStyle:alignRight',
+      'imageStyle:alignLeft',
+      'linkImage',
+    ],
   },
-  image2_alignClasses: [ 
-    'image-align-left',
-    'image-align-center',
-    'image-align-right',
-  ],
-
-}
-
+};
 
 function MyEditor({ getEditor }) {
-  const [Editor, setEditor] = useState({})
+  const [Editor, setEditor] = useState(false);
+  const local = localStorage.getItem('savedContent');
+  // console.log(typeof local);
+  let localSavedContent;
+  if (local !== 'undefined') localSavedContent = JSON.parse(local);
+  const [savedContent] = useState(localSavedContent
+    || '<p>Digite algo!</p>');
   const [content, setContent] = useState('');
+  const [saved, setSaved] = useState(false);
+
+  let autoSave;
   return (
     <>
       <CKEditor
         editor={ClassicEditor}
-        data="<p>Digite algo!</p>"
+        data={savedContent}
         config={editorConfiguration}
         onReady={editor => {
-          // You can store the "editor" and use when it is needed.
-          // console.log('Editor is ready to use!', editor);
           setEditor(editor);
           if (getEditor) getEditor(editor);
         }}
-        onChange={(event, editor) => {setContent(editor.getData())}}
+        onChange={ (_event, editor) => {
+          setContent(editor.getData());
+          if (autoSave) clearTimeout(autoSave);
+          autoSave = setTimeout(() => {
+            const data = editor.getData();
+            localStorage.setItem('savedContent', JSON.stringify(data) );
+            setSaved(true);
+            setTimeout(() => setSaved(false), 1000);
+          }, 5000);
+        } }
       />
+      { saved && <h4>SAVED</h4> }
       <button onClick={() => {
-        setContent(Editor.getData())
-        console.log(content)
+        setContent(Editor.getData());
+        console.log(Editor);
       }} >Preview</button>
-      {content && <div dangerouslySetInnerHTML={{ __html: content }} />}
+      {content && <div className="ck-content" dangerouslySetInnerHTML={{ __html: content }} />}
     </>
-  )
+  );
 }
 
-export default MyEditor
+export default MyEditor;
