@@ -1,11 +1,11 @@
 import { CldUploadWidget } from 'next-cloudinary';
 import { useAtom } from 'jotai';
-import { widgetAtom } from '@/jotai/atomsAplication';
+import { AtomWidget } from '@/jotai/atomsAplication';
 import { cloudinaryReturnProps } from '@/types/Thumb';
 
 function WidgetUpload() {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const [thumbInfos, setThumbInfos] = useAtom(widgetAtom);
+  const [thumbInfos, setThumbInfos] = useAtom(AtomWidget);
 
   const options = {
     cropping: true,
