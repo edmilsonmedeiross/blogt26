@@ -3,44 +3,35 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
+model categories {
+  categoryId   Int    @id @default(autoincrement())
+  categoryName String @unique(map: "categoryName") @db.VarChar(255)
+}
+
 model posts {
-  postId         Int              @id @default(autoincrement())
-  title          String           @db.VarChar(75)
-  createdAt      DateTime?        @default(now()) @db.Timestamptz(6)
-  modifiedAt     DateTime?        @db.Timestamptz(6)
-  content        String
-  published      Boolean?         @default(false)
-  authorId       Int
-  categories     Int[]
-  postCategories postCategories[]
-  users          users            @relation(fields: [authorId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "author")
+  postId     String    @id @db.VarChar(40)
+  title      String    @unique @db.VarChar(75)
+  thumb      String    @db.MediumText
+  createdAt  DateTime? @default(now()) @db.DateTime(0)
+  modifiedAt DateTime? @db.DateTime(0)
+  content    String    @db.MediumText
+  published  Boolean?  @default(false)
+  authorId   String    @db.VarChar(40)
+  categories Json
+  comments   Json?     @default(dbgenerated("(_utf8mb4\\'[]\\')"))
+  slug       String    @unique @db.VarChar(75)
 }
 
 model users {
-  userId   Int     @id @default(autoincrement())
-  name     String  @db.VarChar(45)
-  email    String  @unique(map: "email_unq") @db.VarChar(255)
-  password String
-  role     String? @default("user")
-  bio      String?
-  posts    posts[]
-}
-
-model categories {
-  categoryId     Int              @id @default(autoincrement())
-  categoryName   String           @unique(map: "unique_name")
-  postCategories postCategories[]
-}
-
-model postCategories {
-  postId     Int
-  categoryId Int
-  categories categories @relation(fields: [categoryId], references: [categoryId], onDelete: NoAction, onUpdate: NoAction, map: "fk_categories")
-  posts      posts      @relation(fields: [postId], references: [postId], onDelete: NoAction, onUpdate: NoAction, map: "fk_post")
-
-  @@id([postId, categoryId])
+  userId       String    @id @db.VarChar(40)
+  name         String    @db.VarChar(45)
+  email        String    @unique(map: "email") @db.VarChar(255)
+  registeredAt DateTime? @default(now()) @db.DateTime(0)
+  password     String    @db.MediumText
+  role         String?   @default(dbgenerated("(_utf8mb4\\'user\\')")) @db.Text
+  bio          String?   @db.Text
 }
