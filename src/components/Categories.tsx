@@ -1,40 +1,37 @@
 import React, { ChangeEvent, useEffect } from 'react';
 import { TypeCategories } from '@/types/Categories';
-// import { useAtom } from 'jotai';
-// import { atomCategories } from '@/jotai/JotaiCategories';
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
+import { AtomCat, LoadableAtomCategories } from '@/jotai/JotaiCategories';
 
-interface PageCategoriesProps {
-  categories: TypeCategories[];
-  setStateCategories: React.Dispatch<React.SetStateAction<TypeCategories[]>>;
-}
-const categoriesComp = atom([]);
-
-function Categories({ categories }: PageCategoriesProps) {
-  const [categoriesComponent, setStateCategories] = useAtom(categoriesComp);
+function Categories() {
+  const [result] = useAtom(LoadableAtomCategories);
+  const [test, setTest] = useAtom(AtomCat);
 
   useEffect(() => {
-    setStateCategories(categories);
-  },[]);
+  const savedCategories = localStorage.getItem('savedCategories');
+    if (result.state === 'hasData' && !savedCategories) {
+      setTest(result.data);
+    } 
+  }, [result.state]);
 
-  
   const handleCheckboxChange = (event:  ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = event.target;
-    const newCategories = categoriesComponent.map((category) => {
-      if (name === category.categoryName) {
-        console.log('achooooooou');
-        
-        return { ...category, checked };
-      }
-      return category;
-    });
-    console.log('newCategories =====> ', newCategories);
-    
-    setStateCategories(newCategories);
-    localStorage.setItem('savedCategories', JSON.stringify(newCategories));
+    if (result.state === 'hasData') {
+      const newCategories = test.map<TypeCategories>((category) => {
+        if (name === category.categoryName) {
+          return { ...category, checked };
+        }
+        return category;
+      });
+      setTest(newCategories);
+    }
   };
 
-  if (!categories?.length) return <div>Loading...</div>;
+  if (result.state === 'hasError' && result.error instanceof String) {
+    const { error } = result;
+    return <div>{error}</div>;
+  }
+  if (result.state === 'loading') return <div>Loading...</div>;
 
   return (
     <div>
@@ -42,15 +39,15 @@ function Categories({ categories }: PageCategoriesProps) {
       <form>
         
         {
-          categoriesComponent.map((categoria: TypeCategories) => (
-            <label key={categoria.categoryName}>
+          result.state ==='hasData' && test.map((category: TypeCategories) => (
+            <label key={category.categoryName}>
               <input
                 type="checkbox"
-                name={categoria.categoryName}
-                checked={categoria.checked}
+                name={category.categoryName}
+                checked={category.checked}
                 onChange={handleCheckboxChange}
               />
-              {categoria.categoryName}
+              {category.categoryName}
             </label>
           ))
         }
