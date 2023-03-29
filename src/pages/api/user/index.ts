@@ -17,6 +17,18 @@ export default async function handleUser(
       return res.status(409).json({ message: 'Email já cadastrado' });
     }
 
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Preencha todos os campos' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ message: 'Senha deve ter no mínimo 6 caracteres' });
+    }
+
+    if (typeof name !== 'string' || typeof email !== 'string' || typeof password !== 'string') {
+      return res.status(400).json({ message: 'Algum campo inválido' });
+    }
+
     try {
       const encriptPSW = await bcrypt.hash(password, 10);
       const newUser = await createUser({
