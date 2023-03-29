@@ -1,15 +1,14 @@
 // import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcrypt';
 import client from './prismadb';
-
-// const prisma = new PrismaClient();
+import User from '@/types/User';
 
 type ParanProps = {
   email: string;
   password?: string;
 };
 
-export default async function searchUser(paran: ParanProps) {
+export default async function searchUser(paran: ParanProps): Promise<User | null | unknown> {
   console.log('paran', paran);
 
   try {
