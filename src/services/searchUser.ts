@@ -6,40 +6,41 @@ import client from './prismadb';
 
 type ParanProps = {
   email: string;
-  password: string;
+  password?: string;
 };
 
-
 export default async function searchUser(paran: ParanProps) {
-
   console.log('paran', paran);
-  
 
   try {
+    await client.$connect();
     const { email, password } = paran;
 
     const user = await client?.users.findUnique({
       where: {
         email,
-      }
+      },
     });
 
     if (!user) {
       return null;
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (user?.password && password) {
+      const passwordMatch = await bcrypt.compare(password, user.password);
 
-    if (!passwordMatch) {
-      return null;
+      if (!passwordMatch) {
+        return null;
+      }
+
+      user.password = '';
     }
-
-    user.password = '';
-    client?.$disconnect();
 
     return user;
   } catch (err) {
     console.log(err);
     return err;
+  } finally {
+    await client?.$disconnect();
   }
 }
