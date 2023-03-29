@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
@@ -11,7 +11,8 @@ export default function Login() {
     setCredential({ ...credential, [name]: value });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const res = await signIn('credentials', {
       redirect: false,
       email: credential.email,
@@ -25,7 +26,9 @@ export default function Login() {
 
   return (
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    <form onSubmit={ handleSubmit }>
+    <form onSubmit={ (e: FormEvent<HTMLFormElement>) => {
+      handleSubmit(e).catch((err) => console.error(err));
+    } }>
       <input
         type="text"
         value={credential.email}
