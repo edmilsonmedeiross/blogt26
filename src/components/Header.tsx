@@ -1,17 +1,17 @@
-import { UserObj, Roles } from "@/types/User";
-import { useSession } from "next-auth/react";
-import Link from "next/link"
+import { UserObj, Roles } from '@/types/User';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 interface Data {
   data: UserObj | null;
-  status: "loading" | "authenticated" | "unauthenticated";
+  status: 'loading' | 'authenticated' | 'unauthenticated';
 }
 
 function Header() {
   const userSession = useSession() as Data;
   console.log(userSession);
 
-  let role: Roles = "user";
+  let role: Roles = 'user';
   if (userSession.data) {
     const { data: { user } } = userSession;
     role = user?.role; 
@@ -19,16 +19,16 @@ function Header() {
 
   return (
     <>
-    <nav>
+    <nav className="ck-head">
       <Link href="/login">Login</Link>
       {
-        role === "admin"
+        role === 'admin'
           && <Link href="/create-posts">Administração</Link>
       }
     </nav>
     </>
-  )
+  );
 }
 
-export default Header
+export default Header;
 
