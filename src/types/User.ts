@@ -1,14 +1,12 @@
-export type Roles = "admin" | "mod" | "user";
-
+export type Roles = 'admin' | 'mod' | 'user';
 export default interface User {
-  userId: String;
-  name: String;
-  email: String;
-  password: String;
+  userId: string;
+  name: string;
+  email: string;
+  password: string;
   role: Roles;
-  bio: String | null;
-}
-
+  bio: string | null;
+};
 export interface UserObj {
-  user: User
+  user: User;
 }
