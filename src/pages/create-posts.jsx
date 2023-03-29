@@ -35,16 +35,16 @@ function CreatePosts() {
 
   const handleFinish = async () => {
     if (!thumb) {
-      alert('Está faltando uma imagem de Thumbnail');
+      alert('Está faltando uma imagem de Thumbnail!');
     }
 
     if (!title) {
-      alert('Preencha o título do post');
+      alert('Preencha o título do post!');
       return;
     }
 
     if (!categories.some((category) => !category.checked)) {
-      alert('Selecione ao menos uma categoria');
+      alert('Selecione ao menos uma categoria!');
       return;
     }
 
@@ -93,11 +93,9 @@ function CreatePosts() {
     <div>
       <div>Criar Post</div>
 
-      {categories?.length !== 0 && (
-      <Categories
-        categories={ categories }
-      />)}
-
+      {/* {categories?.length !== 0 && (
+      <Categories />)} */}
+      <Categories />
       <input
       type="text"
       value={title}
@@ -111,7 +109,7 @@ function CreatePosts() {
       <br />
 
       <button onClick={handleFinish}>Finalizar Edição</button>
-      {thumb && <CldImage src={thumb.publicId} alt={thumb.publicId} width="500" />}
+      {thumb.publicId && <CldImage src={thumb.publicId || ''} alt={thumb.publicId} width="500" />}
     </div>
   );
 }
