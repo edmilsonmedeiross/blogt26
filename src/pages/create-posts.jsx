@@ -12,8 +12,9 @@ import { dehydrate, QueryClient } from 'react-query';
 import WidgetUpload from '@/components/WidgetUpload';
 import { AtomEditor, AtomWidgetVisible, AtomSending, AtomWidget, AtomTitle } from '@/jotai/atomsAplication';
 import { CldImage } from 'next-cloudinary';
+// import Editorr from '../components/BundledEditor';
 
-const CKEditor = dynamic(() => import('../components/MyEditor'), {
+const BundledEditor = dynamic(() => import('../components/BundledEditor'), {
   ssr: false,
 });
 
@@ -25,12 +26,12 @@ function CreatePosts() {
   const [sending, setSending] = useAtom(AtomSending);
   const [thumb] = useAtom(AtomWidget);
   const { data: { user } } = useSession();
-  const [isWidgetVisible, setWidgetVisible] = useAtom(AtomWidgetVisible);
+  const [isClientSide, setIsClientSide] = useAtom(AtomWidgetVisible);
 
   useEffect(() => {
     const local = localStorage?.getItem('savedTitle');
     setTitle(local);
-    setWidgetVisible(true);
+    setIsClientSide(true);
   }, []);
 
   const handleFinish = async () => {
@@ -93,21 +94,18 @@ function CreatePosts() {
     <div>
       <div>Criar Post</div>
 
-      {/* {categories?.length !== 0 && (
-      <Categories />)} */}
       <Categories />
       <input
-      type="text"
-      value={title}
-      onChange={handleTitle}
-      placeholder="Título do Post"
+        type="text"
+        value={title}
+        onChange={handleTitle}
+        placeholder="Título do Post"
       />
 
-      { isWidgetVisible && <WidgetUpload />}
-
-      <CKEditor getEditor={getEditor} />
+      { isClientSide && <WidgetUpload />}
+      
       <br />
-
+      { isClientSide && <BundledEditor />}
       <button onClick={handleFinish}>Finalizar Edição</button>
       {thumb.publicId && <CldImage src={thumb.publicId || ''} alt={thumb.publicId} width="500" />}
     </div>

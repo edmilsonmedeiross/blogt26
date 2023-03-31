@@ -19,6 +19,6 @@
     },
     "types": ["next", "next/types/global", "node"]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/create-posts.jsx", "src/components/MyEditor.jsx", "src/components/widgetFile.js", "src/components/Cloudinary.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/create-posts.jsx", "src/components/MyEditor.jsx", "src/components/widgetFile.js", "src/components/Cloudinary.js", "src/components/BundledEditor.jsx"],
   "exclude": ["node_modules"]
 }
